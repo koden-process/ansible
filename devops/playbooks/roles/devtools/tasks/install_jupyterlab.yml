@@ -1,0 +1,6 @@
+---
+- name: Install JupyterLab Desktop via Snap
+  snap:
+    name: jupyterlab-desktop
+    classic: yes  # Assuming it requires classic confinement, check this based on the snap's requirements
+  become: yes

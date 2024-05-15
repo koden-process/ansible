@@ -1,0 +1,5 @@
+---
+- name: Install dataspell via Snap
+  snap:
+    name: "dataspell"
+    classic: yes  # Many development tools require classic confinement

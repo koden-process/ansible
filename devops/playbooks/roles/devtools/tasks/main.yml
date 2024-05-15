@@ -1,0 +1,21 @@
+---
+- name: Install VSCode 
+  include_tasks: install_vscode.yml
+
+- name: Install dataspell
+  include_tasks: install_dataspell.yml
+
+- name: Install datagrip
+  include_tasks: install_datagrip.yml
+
+- name: Install phpstorm
+  include_tasks: install_phpstorm.yml
+
+- name: Install webstorm
+  include_tasks: install_webstorm.yml
+
+- name: Install pycharm-professional
+  include_tasks: install_pycharm-professional.yml
+
+- name: Install jupyterlab
+  include_tasks: install_jupyterlab.yml

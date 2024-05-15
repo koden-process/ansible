@@ -1,0 +1,4 @@
+---
+- name: Install Slack 
+  include_tasks: install_slack.yml
+

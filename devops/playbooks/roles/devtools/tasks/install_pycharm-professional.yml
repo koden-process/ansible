@@ -1,0 +1,5 @@
+---
+- name: Install pycharm-professional via Snap
+  snap:
+    name: "pycharm-professional"
+    classic: yes  # Many development tools require classic confinement

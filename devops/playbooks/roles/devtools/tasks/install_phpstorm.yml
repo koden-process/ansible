@@ -1,0 +1,5 @@
+---
+- name: Install phpstorm via Snap
+  snap:
+    name: "phpstorm"
+    classic: yes  # Many development tools require classic confinement

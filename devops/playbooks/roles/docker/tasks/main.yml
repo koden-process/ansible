@@ -50,3 +50,17 @@
     name: docker
     state: started
     enabled: true
+
+- name: Download Docker Desktop .deb package
+  get_url:
+    url: "https://desktop.docker.com/linux/main/amd64/docker-desktop-4.10.1-amd64.deb"
+    dest: "/tmp/docker-desktop.deb"
+
+- name: Install Docker Desktop
+  apt:
+    deb: "/tmp/docker-desktop.deb"
+
+- name: Remove the downloaded .deb file
+  file:
+    path: "/tmp/docker-desktop.deb"
+    state: absent

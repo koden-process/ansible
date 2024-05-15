@@ -4,4 +4,6 @@
   become: yes
   roles:
     - common
+    - communication
+    - devtools
     - docker

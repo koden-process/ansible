@@ -1,0 +1,5 @@
+---
+- name: Install webstorm via Snap
+  snap:
+    name: "webstorm"
+    classic: yes  # Many development tools require classic confinement

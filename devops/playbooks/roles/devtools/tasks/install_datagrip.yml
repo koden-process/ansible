@@ -1,0 +1,5 @@
+---
+- name: Install datagrip via Snap
+  snap:
+    name: "datagrip"
+    classic: yes  # Many development tools require classic confinement
