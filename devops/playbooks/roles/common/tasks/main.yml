@@ -17,4 +17,5 @@
       - vim
       - curl
       - git
+      - tree
     state: present

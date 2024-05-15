@@ -3,4 +3,5 @@
   hosts: development 
   become: yes
   roles:
-    - common 
+    - common
+    - docker
