@@ -1,0 +1,9 @@
+all:
+  children:
+    killian:
+      hosts:
+        z2:
+          ansible_host: 192.168.1.88
+          ansible_port: 22
+          ansible_user: killian
+          ansible_become_password: kilikili

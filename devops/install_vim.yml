@@ -1,0 +1,9 @@
+- name: Install vim
+  hosts: killian 
+  become: yes
+  tasks:
+    - name: install vim with privileges 
+      apt: 
+        name: vim
+        state: present
+        update_cache: yes

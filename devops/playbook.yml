@@ -1,0 +1,15 @@
+- name: Installation de docker
+  hosts: killian 
+  become: yes
+  tasks:
+    - name: installation de docker avec elevations de privileges 
+      apt: 
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: démarrage du service docker grâce au module service 
+      service: 
+        name: docker 
+        state: started 
+        enabled: yes 
