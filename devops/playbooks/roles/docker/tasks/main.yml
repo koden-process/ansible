@@ -28,6 +28,23 @@
     state: present
     update_cache: yes
 
+- name: Add user to Docker group using shell
+  become: yes
+  shell: usermod -aG docker {{ ansible_user }}
+
+- name: Allow user to access docker.sock
+  become: yes
+  shell: chmod 666 /var/run/docker.sock
+
+- name: Verify user membership in Docker group
+  command: groups {{ ansible_user }}
+  register: docker
+  changed_when: false
+
+- name: Display user groups
+  debug:
+    var: docker.stdout
+
 - name: Ensure Docker service is started and enabled
   service:
     name: docker
