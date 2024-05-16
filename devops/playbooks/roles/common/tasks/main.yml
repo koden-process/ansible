@@ -19,6 +19,7 @@
       - git
       - tree
       - gnome-shell-extensions
+      - python3-pip
     state: present
 
 #- name: Install gnome-shell-extensions clipboard Indicator
