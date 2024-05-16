@@ -1,0 +1,3 @@
+# Bugs
+/devops/playbooks/roles/common/tasks/install_extensions_clipboard_indicator.yml
+il faut ajouter une condition, si le dossier n'existe pas on exécute tel quel, sinon on fait un git pull
