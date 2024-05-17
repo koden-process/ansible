@@ -1,3 +1,17 @@
 # Bugs
 /devops/playbooks/roles/common/tasks/install_extensions_clipboard_indicator.yml
 il faut ajouter une condition, si le dossier n'existe pas on exécute tel quel, sinon on fait un git pull
+
+
+Ajout sur le profil devops
+pip install ansible --user
+apt install pipx
+pipx ensurepath
+
+pipx install ansible-lint
+pipx install ansible-creator
+
+
+Extensions Gnome Shell
+https://extensions.gnome.org/away/https%253A%252F%252Fgithub.com%252Fcorecoding%252FVitals
+https://extensions.gnome.org/away/https%253A%252F%252Fgithub.com%252Fmzur%252Fgnome-shell-wsmatrix
