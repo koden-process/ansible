@@ -2,5 +2,6 @@
     "files.associations": {
         "*.embeddedhtml": "html",
         "plyconfig.json": "jsonc"
-    }
+    },
+    "ansible.python.interpreterPath": "/bin/python3"
 }
