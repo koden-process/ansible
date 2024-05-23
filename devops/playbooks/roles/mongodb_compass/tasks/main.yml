@@ -1,0 +1,17 @@
+---
+- name: Download MongoDB Compass package
+  get_url:
+    url: https://downloads.mongodb.com/compass/mongodb-compass_{{ compass_version }}_amd64.deb
+    dest: "/tmp/mongodb-compass_{{ compass_version }}_amd64.deb"
+  register: download
+
+- name: Install MongoDB Compass
+  apt:
+    deb: "/tmp/mongodb-compass_{{ compass_version }}_amd64.deb"
+  when: download.changed
+
+- name: Clean up installation package
+  file:
+    path: "/tmp/mongodb-compass_{{ compass_version }}_amd64.deb"
+    state: absent
+  when: download.changed
