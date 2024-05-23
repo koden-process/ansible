@@ -4,7 +4,6 @@ il faut ajouter une condition, si le dossier n'existe pas on exécute tel quel, 
 
 
 Ajout sur le profil devops
-apt install gnome-tweaks
 pip install ansible --user
 apt install pipx
 pipx ensurepath
