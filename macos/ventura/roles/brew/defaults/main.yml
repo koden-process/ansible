@@ -1,0 +1,71 @@
+---
+brew_taps:
+  - homebrew/bundle
+  - homebrew/services
+  - microsoft/git
+
+brew_packages:
+  - awscli
+  - bash
+  - binutils
+  - git
+  - gnupg
+  - gzip
+  - htop
+  - nmap
+  - node
+  - openssh
+  - pyenv
+  - python@3.11
+  - rsync
+  - tree
+  - wget
+  - zlib
+  - zsh
+
+brew_cask_packages:
+  - signal
+  - slack
+  - zoom
+  - firefox
+  - google-chrome
+  - anaconda
+  - copyclip
+  - data-science-studio
+  - datagrip
+  - dataspell
+  - discord
+  - docker
+  - audacity
+  - figma
+  - flutter
+  - gimp
+  - github
+  - google-cloud-sdk
+  - google-drive
+  - jetbrains-gateway
+  - lastpass
+  - libreoffice
+  - logitech-presentation
+  - microsoft-office
+  - mongodb-compass
+  - neo4j
+  - arduino
+  - obsidian
+  - phpstorm
+  - pycharm
+  - react-studio
+  - screenflow
+  - scribus
+  - sonos
+  - spotify
+  - spyder
+  - jupyterlab
+  - sublime-text
+  - tunein
+  - unetbootin
+  - vagrant
+  - visual-studio-code
+  - vlc
+  - webstorm
+  - whatsapp

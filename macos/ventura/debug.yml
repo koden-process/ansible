@@ -1,0 +1,6 @@
+---
+- name: Configure macOS
+  hosts: mymac
+  connection: local
+  roles:
+    - macos_settings

@@ -1,0 +1,33 @@
+---
+- name: Install necessary tmux homebrew packages
+  community.general.homebrew:
+    name:
+      - tmux
+      - reattach-to-user-namespace
+    state: present
+  tags: tmux
+
+- name: Copy custom tmux config
+  ansible.builtin.copy:
+    src: tmux/.tmux.conf
+    dest: /Users/{{ username }}/.tmux.conf
+    mode: "0644"
+  tags: tmux
+
+- name: Create tmux plugin directory
+  ansible.builtin.file:
+    dest: /Users/{{ username }}/.tmux/plugins
+    state: directory
+    mode: "0755"
+  tags: tmux
+
+- name: Install plugins
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "/Users/{{ username }}/.tmux/plugins/{{ item.name }}"
+    version: "{{ item.version }}"
+    force: true
+  with_items: "{{ tmux.plugins }}"
+  tags: tmux
+
+

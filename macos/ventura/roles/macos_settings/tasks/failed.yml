@@ -1,0 +1,5 @@
+
+
+- name: Setup Network
+  ansible.builtin.include_tasks: configure_network.yml
+  tags: network
