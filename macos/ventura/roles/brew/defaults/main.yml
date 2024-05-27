@@ -30,7 +30,6 @@ brew_cask_packages:
   - firefox
   - google-chrome
   - anaconda
-  - copyclip
   - data-science-studio
   - datagrip
   - dataspell
@@ -69,3 +68,4 @@ brew_cask_packages:
   - vlc
   - webstorm
   - whatsapp
+  - maccy
