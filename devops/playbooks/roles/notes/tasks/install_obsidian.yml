@@ -1,0 +1,5 @@
+---
+- name: Install obsidian
+  snap:
+    name: "obsidian"
+    classic: yes  # Many development tools require classic confinement

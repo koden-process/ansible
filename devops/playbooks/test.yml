@@ -1,0 +1,6 @@
+---
+- name: Deploy a workstation
+  hosts: development 
+  become: yes
+  roles:
+    - common

@@ -1,0 +1,3 @@
+---
+- name: Install Obsidian 
+  include_tasks: install_obsidian.yml
