@@ -16,3 +16,9 @@ Extensions Gnome Shell
 https://extensions.gnome.org/away/https%253A%252F%252Fgithub.com%252Fcorecoding%252FVitals
 https://extensions.gnome.org/away/https%253A%252F%252Fgithub.com%252Fmzur%252Fgnome-shell-wsmatrix
 https://extensions.gnome.org/extension/6868/screenshort-cut/
+
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+
+echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
+
+source ~/.zshrc
