@@ -47,11 +47,13 @@ homebrew:
     - yq
 
   casks:
+    - signal
+    - slack
+    - zoom
     - firefox
     - google-chrome
     - chatgpt
     - anaconda
-    - copyclip
     - data-science-studio
     - datagrip
     - dataspell
@@ -73,7 +75,6 @@ homebrew:
     - neo4j
     - arduino
     - obsidian
-    - onedrive
     - phpstorm
     - pycharm
     - rancher
