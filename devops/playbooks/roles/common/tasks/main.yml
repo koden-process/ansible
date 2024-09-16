@@ -23,6 +23,7 @@
       - gnome-tweaks
       - zsh
       - terminator
+      - net-tools
     state: present
 
 #- name: Install gnome-shell-extensions clipboard Indicator
