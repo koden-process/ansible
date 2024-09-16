@@ -19,4 +19,8 @@
       - terminator
       - net-tools
       #- realtek-rtl88xxau-dkms
+      - wireshark
     state: present
+
+#- name: Add user to group wireshark 
+#  command: usermod -aG wireshark "{{ ansible_user }}"
