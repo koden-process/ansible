@@ -1,0 +1,22 @@
+---
+# tasks file for hacking
+# Update all packages to the latest version
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Upgrade all packages
+  apt:
+    upgrade: dist
+  when: ansible_os_family == "Debian"
+
+# Ensure basic utilities are installed
+- name: Ensure necessary packages are installed
+  package:
+    name:
+      - zsh
+      - terminator
+      - net-tools
+      - realtek-rtl88xxau-dkms
+    state: present
