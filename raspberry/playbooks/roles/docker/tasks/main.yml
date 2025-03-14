@@ -12,13 +12,14 @@
   when: ansible_os_family == 'Debian'
 
 - name: Add Docker’s official GPG key
-  ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/trusted.gpg.d/docker.asc
+    mode: '0644'
 
-- name: Add Docker repository for Raspberry Pi
+- name: Add Docker repository for Raspberry Pi OS (Debian Bookworm)
   ansible.builtin.apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+    repo: deb [arch=armhf] https://download.docker.com/linux/debian bookworm stable
     state: present
     update_cache: yes
 
