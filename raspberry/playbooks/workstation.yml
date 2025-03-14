@@ -1,0 +1,7 @@
+---
+- name: Deploy a workstation
+  hosts: pis 
+  become: yes
+  roles:
+    - common
+    - docker

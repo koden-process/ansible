@@ -1,0 +1,5 @@
+all:
+  children:
+    pis:
+      hosts:
+        pi_garage:
