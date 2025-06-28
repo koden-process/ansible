@@ -1,0 +1,15 @@
+---
+- name: Update and upgrade all k8s nodes
+  hosts: k8s_nodes
+  become: true
+  
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      
+    - name: Upgrade all packages
+      apt:
+        upgrade: yes
+        autoremove: yes

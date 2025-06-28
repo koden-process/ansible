@@ -1,0 +1,5 @@
+[k8s_nodes]
+koden0 ansible_host=10.0.0.200 ansible_user=skit
+koden1 ansible_host=10.0.0.201 ansible_user=skit
+koden2 ansible_host=10.0.0.202 ansible_user=skit
+koden3 ansible_host=10.0.0.203 ansible_user=skit
