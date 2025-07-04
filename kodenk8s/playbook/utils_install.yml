@@ -1,0 +1,29 @@
+---
+- name: Installer utilitaires réseau et éditeur sur koden0-3
+  hosts: koden0,koden1,koden2,koden3
+  become: yes
+  tasks:
+    - name: Installer iputils-ping
+      package:
+        name: iputils-ping
+        state: present
+
+    - name: Installer netcat (openbsd)
+      package:
+        name: netcat-openbsd
+        state: present
+
+    - name: Installer vim
+      package:
+        name: vim
+        state: present
+
+    - name: Installer lsof
+      package:
+        name: lsof
+        state: present
+
+    - name: Installer git
+      package:
+        name: git
+        state: present

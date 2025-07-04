@@ -1,0 +1,9 @@
+---
+- name: Installer utilitaires réseau et éditeur sur koden0-3
+  hosts: koden0,koden1,koden2,koden3
+  become: yes
+  tasks:
+    - name: Installer python3.12
+      package:
+        name: python3.12-venv
+        state: present
