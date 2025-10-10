@@ -3,7 +3,7 @@
   hosts: koden0,koden1,koden2,koden3
   become: yes
   vars:
-    k3s_version: v1.29.4+k3s1  # adapte la version si besoin
+    k3s_version: v1.32.6+k3s1 # adapte la version si besoin
     k3s_install_url: https://get.k3s.io
   tasks:
     - name: Ensure curl is installed
