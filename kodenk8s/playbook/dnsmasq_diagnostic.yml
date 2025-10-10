@@ -1,0 +1,68 @@
+---
+- name: Diagnostic dnsmasq on k8s master
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: Check dnsmasq service status
+      systemd:
+        name: dnsmasq
+      register: dnsmasq_status
+      ignore_errors: true
+    
+    - name: Display dnsmasq status
+      debug:
+        msg: |
+          dnsmasq service status: {{ dnsmasq_status.status.ActiveState | default('unknown') }}
+          Enabled: {{ dnsmasq_status.status.UnitFileState | default('unknown') }}
+    
+    - name: Check systemd-resolved status
+      systemd:
+        name: systemd-resolved
+      register: resolved_status
+      ignore_errors: true
+    
+    - name: Display systemd-resolved status
+      debug:
+        msg: |
+          systemd-resolved status: {{ resolved_status.status.ActiveState | default('unknown') }}
+          Enabled: {{ resolved_status.status.UnitFileState | default('unknown') }}
+    
+    - name: Check what's listening on port 53
+      shell: |
+        netstat -tlnp | grep :53 2>/dev/null || ss -tlnp | grep :53 2>/dev/null || echo "Rien n'écoute sur le port 53"
+      register: port_53_usage
+      ignore_errors: true
+    
+    - name: Display port 53 usage
+      debug:
+        msg: "Port 53 usage: {{ port_53_usage.stdout_lines }}"
+    
+    - name: Show dnsmasq logs
+      shell: |
+        journalctl -u dnsmasq --no-pager -n 20
+      register: dnsmasq_logs
+      ignore_errors: true
+    
+    - name: Display dnsmasq logs
+      debug:
+        msg: "dnsmasq logs: {{ dnsmasq_logs.stdout_lines }}"
+    
+    - name: Test dnsmasq configuration
+      shell: |
+        dnsmasq --test 2>&1 || echo "Configuration test failed"
+      register: config_test
+      ignore_errors: true
+    
+    - name: Display configuration test result
+      debug:
+        msg: "Configuration test: {{ config_test.stdout_lines }}"
+    
+    - name: Check amazone.lan resolution
+      shell: |
+        nslookup test.amazone.lan 127.0.0.1 2>/dev/null || dig @127.0.0.1 test.amazone.lan 2>/dev/null || echo "DNS resolution test failed"
+      register: dns_test
+      ignore_errors: true
+    
+    - name: Display DNS resolution test
+      debug:
+        msg: "DNS resolution test: {{ dns_test.stdout_lines }}"

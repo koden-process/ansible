@@ -1,0 +1,71 @@
+---
+- name: Test dnsmasq DNS resolution
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: Test local amazone.lan resolution
+      shell: |
+        nslookup test.amazone.lan 127.0.0.1
+      register: local_test
+      ignore_errors: yes
+    
+    - name: Display local DNS test result
+      debug:
+        msg: |
+          Test amazone.lan resolution:
+          {{ local_test.stdout_lines }}
+    
+    - name: Test external DNS resolution via dnsmasq
+      shell: |
+        nslookup google.com 127.0.0.1
+      register: external_test
+      ignore_errors: yes
+    
+    - name: Display external DNS test result
+      debug:
+        msg: |
+          Test external DNS resolution:
+          {{ external_test.stdout_lines }}
+    
+    - name: Test direct resolution to public servers
+      shell: |
+        nslookup google.com 8.8.8.8
+      register: direct_test
+      ignore_errors: yes
+    
+    - name: Display direct DNS test result
+      debug:
+        msg: |
+          Test direct DNS resolution:
+          {{ direct_test.stdout_lines }}
+    
+    - name: Show dnsmasq query logs
+      shell: |
+        journalctl -u dnsmasq --no-pager -n 10 | grep -i query || echo "No query logs found"
+      register: query_logs
+      ignore_errors: yes
+    
+    - name: Display query logs
+      debug:
+        msg: |
+          Recent DNS queries:
+          {{ query_logs.stdout_lines }}
+    
+    - name: Test resolution with dig if available
+      shell: |
+        if command -v dig >/dev/null 2>&1; then
+          echo "=== Test amazone.lan with dig ==="
+          dig @127.0.0.1 test.amazone.lan
+          echo "=== Test external domain with dig ==="
+          dig @127.0.0.1 google.com
+        else
+          echo "dig not available, install with: apt install dnsutils"
+        fi
+      register: dig_test
+      ignore_errors: yes
+    
+    - name: Display dig test result
+      debug:
+        msg: |
+          Dig test results:
+          {{ dig_test.stdout_lines }}
