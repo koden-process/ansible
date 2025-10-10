@@ -5,6 +5,7 @@
   vars:
     dns_domain: "amazone.lan"
     dns_ip: "10.0.0.200"
+    stormshield_ip: "10.0.0.254"
     upstream_dns:
       - "8.8.8.8"
       - "1.1.1.1"
@@ -64,6 +65,11 @@
       copy:
         content: |
           # Configuration pour {{ dns_domain }}
+          
+          # Règle spécifique : stormshield.{{ dns_domain }} → {{ stormshield_ip }}
+          address=/stormshield.{{ dns_domain }}/{{ stormshield_ip }}
+          
+          # Règle générale : *.{{ dns_domain }} → {{ dns_ip }}
           address=/.{{ dns_domain }}/{{ dns_ip }}
         dest: /etc/dnsmasq.d/{{ dns_domain }}.conf
         owner: root
@@ -100,5 +106,7 @@
         msg: |
           ✅ dnsmasq status: {{ service_status.status.ActiveState }}
           🔧 Enabled: {{ service_status.status.UnitFileState }}
-          🌐 Domain configured: *.{{ dns_domain }} → {{ dns_ip }}
+          🌐 Domain configured:
+             - *.{{ dns_domain }} → {{ dns_ip }}
+             - stormshield.{{ dns_domain }} → {{ stormshield_ip }}
           📡 Upstream DNS: {{ upstream_dns | join(', ') }}

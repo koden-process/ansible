@@ -3,17 +3,26 @@
   hosts: k8s_master
   become: yes
   tasks:
-    - name: Test local amazone.lan resolution
+    - name: Test general amazone.lan resolution
       shell: |
         nslookup test.amazone.lan 127.0.0.1
-      register: local_test
+      register: general_test
       ignore_errors: yes
     
-    - name: Display local DNS test result
+    - name: Test specific stormshield.amazone.lan resolution
+      shell: |
+        nslookup stormshield.amazone.lan 127.0.0.1
+      register: stormshield_test
+      ignore_errors: yes
+    
+    - name: Display local DNS test results
       debug:
         msg: |
-          Test amazone.lan resolution:
-          {{ local_test.stdout_lines }}
+          Test *.amazone.lan → 10.0.0.200:
+          {{ general_test.stdout_lines }}
+          
+          Test stormshield.amazone.lan → 10.0.0.254:
+          {{ stormshield_test.stdout_lines }}
     
     - name: Test external DNS resolution via dnsmasq
       shell: |

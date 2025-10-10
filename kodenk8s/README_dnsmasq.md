@@ -39,7 +39,22 @@ Teste la résolution DNS locale et externe.
 
 ## 📋 Configuration
 
-Le domaine et l'IP sont configurés dans les variables du playbook :
+Le domaine et les IPs sont configurés dans les variables du playbook :
 - `dns_domain: "amazone.lan"`
-- `dns_ip: "10.0.0.200"`
+- `dns_ip: "10.0.0.200"` (IP générale pour *.amazone.lan)
+- `stormshield_ip: "10.0.0.254"` (IP spécifique pour stormshield.amazone.lan)
 - `upstream_dns: ["8.8.8.8", "1.1.1.1"]`
+
+## 🎯 Résolution DNS
+
+- `*.amazone.lan` → `10.0.0.200` (règle générale)
+- `stormshield.amazone.lan` → `10.0.0.254` (règle spécifique)
+- Autres domaines → Relayés vers `8.8.8.8` et `1.1.1.1`
+
+## 🚀 Test rapide
+
+```bash
+./quick_test_dns.sh
+```
+
+Teste rapidement les 3 types de résolution.
