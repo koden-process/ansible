@@ -9,31 +9,34 @@
     upstream_dns:
       - "8.8.8.8"
       - "1.1.1.1"
-  
+
   tasks:
     - name: Install dnsmasq package
-      package:
+      ansible.builtin.package:
         name: dnsmasq
         state: present
-    
+
     - name: Detect main network interface
-      shell: |
+      ansible.builtin.shell: |
+        set -o pipefail
         ip route | grep default | head -1 | awk '{print $5}'
       register: main_interface
       changed_when: false
-      
+      args:
+        executable: /bin/bash
+
     - name: Display detected interface
-      debug:
+      ansible.builtin.debug:
         msg: "Interface détectée: {{ main_interface.stdout }}"
-    
+
     - name: Stop dnsmasq service
-      systemd:
+      ansible.builtin.systemd:
         name: dnsmasq
         state: stopped
-      ignore_errors: true
-    
+      failed_when: false
+
     - name: Create main dnsmasq configuration
-      copy:
+      ansible.builtin.copy:
         content: |
           # Configuration dnsmasq pour koden0
           port=53
@@ -41,18 +44,18 @@
           interface={{ main_interface.stdout }}
           {% endif %}
           interface=lo
-          
+
           # Serveurs DNS en amont
           {% for server in upstream_dns %}
           server={{ server }}
           {% endfor %}
-          
+
           # Pas de DHCP
           no-dhcp-interface=
-          
+
           # Configuration supplémentaire
           conf-dir=/etc/dnsmasq.d/,*.conf
-          
+
           # Logs pour debug
           log-queries
         dest: /etc/dnsmasq.conf
@@ -60,49 +63,52 @@
         group: root
         mode: '0644'
         backup: true
-    
+
+    - name: Ensure dnsmasq.d directory exists
+      ansible.builtin.file:
+        path: /etc/dnsmasq.d
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
     - name: Create domain-specific configuration
-      copy:
+      ansible.builtin.copy:
         content: |
           # Configuration pour {{ dns_domain }}
-          
+
           # Règle spécifique : stormshield.{{ dns_domain }} → {{ stormshield_ip }}
           address=/stormshield.{{ dns_domain }}/{{ stormshield_ip }}
-          
+
+          # Règle spécifique : kafka.{{ dns_domain }} → 10.0.0.211
+          address=/kafka.{{ dns_domain }}/10.0.0.211
+
           # Règle générale : *.{{ dns_domain }} → {{ dns_ip }}
           address=/.{{ dns_domain }}/{{ dns_ip }}
         dest: /etc/dnsmasq.d/{{ dns_domain }}.conf
         owner: root
         group: root
         mode: '0644'
-    
-    - name: Create dnsmasq.d directory
-      file:
-        path: /etc/dnsmasq.d
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
-    
+
     - name: Test dnsmasq configuration syntax
-      command: dnsmasq --test
+      ansible.builtin.command: dnsmasq --test
       register: config_test
       changed_when: false
       failed_when: config_test.rc != 0
-    
+
     - name: Start and enable dnsmasq service
-      systemd:
+      ansible.builtin.systemd:
         name: dnsmasq
         state: started
         enabled: true
-    
+
     - name: Verify dnsmasq is running
-      systemd:
+      ansible.builtin.systemd:
         name: dnsmasq
       register: service_status
-      
+
     - name: Display service status
-      debug:
+      ansible.builtin.debug:
         msg: |
           ✅ dnsmasq status: {{ service_status.status.ActiveState }}
           🔧 Enabled: {{ service_status.status.UnitFileState }}
