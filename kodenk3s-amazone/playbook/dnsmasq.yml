@@ -83,6 +83,9 @@
           # Règle spécifique : kafka.{{ dns_domain }} → 10.0.0.211
           address=/kafka.{{ dns_domain }}/10.0.0.211
 
+          # Règle spécifique : postgres.{{ dns_domain }} → 10.0.0.212
+          address=/postgres.{{ dns_domain }}/10.0.0.212
+
           # Règle générale : *.{{ dns_domain }} → {{ dns_ip }}
           address=/.{{ dns_domain }}/{{ dns_ip }}
         dest: /etc/dnsmasq.d/{{ dns_domain }}.conf
