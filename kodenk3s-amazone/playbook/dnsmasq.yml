@@ -86,6 +86,9 @@
           # Règle spécifique : postgres.{{ dns_domain }} → 10.0.0.212
           address=/postgres.{{ dns_domain }}/10.0.0.212
 
+          # Règle spécifique : mongodb.{{ dns_domain }} → 10.0.0.213
+          address=/mongodb.{{ dns_domain }}/10.0.0.213
+
           # Règle générale : *.{{ dns_domain }} → {{ dns_ip }}
           address=/.{{ dns_domain }}/{{ dns_ip }}
         dest: /etc/dnsmasq.d/{{ dns_domain }}.conf
@@ -118,4 +121,7 @@
           🌐 Domain configured:
              - *.{{ dns_domain }} → {{ dns_ip }}
              - stormshield.{{ dns_domain }} → {{ stormshield_ip }}
+             - kafka.{{ dns_domain }} →
+             - postgres.{{ dns_domain }} →
+             - mongodb.{{ dns_domain }} → 10.0.0.213
           📡 Upstream DNS: {{ upstream_dns | join(', ') }}
