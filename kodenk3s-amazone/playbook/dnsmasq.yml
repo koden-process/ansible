@@ -89,6 +89,12 @@
           # Règle spécifique : mongo.{{ dns_domain }} → 10.0.0.213
           address=/mongo.{{ dns_domain }}/10.0.0.213
 
+          # Règle spécifique : emqx.{{ dns_domain }} → 10.0.0.214
+          address=/emqx.{{ dns_domain }}/10.0.0.214
+
+          # Règle spécifique : redis.{{ dns_domain }} → 10.0.0.215
+          address=/redis.{{ dns_domain }}/10.0.0.215
+
           # Règle générale : *.{{ dns_domain }} → {{ dns_ip }}
           address=/.{{ dns_domain }}/{{ dns_ip }}
         dest: /etc/dnsmasq.d/{{ dns_domain }}.conf
