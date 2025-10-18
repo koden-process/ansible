@@ -54,16 +54,22 @@
             )
           }}
 
-    - name: Merge kube-proxy arguments
+    - name: Filter out null values from kube-proxy arguments
+      ansible.builtin.set_fact:
+        k3s_kube_proxy_args_filtered: "{{ k3s_kube_proxy_args | select('defined') | select('ne', None) | list }}"
+
+    - name: Merge kube-proxy arguments (only if non-empty)
       ansible.builtin.set_fact:
         k3s_config_merged: >-
           {{
             k3s_config_current | combine(
               {
-                'kube-proxy-arg': k3s_kube_proxy_args | unique
+                'kube-proxy-arg': k3s_kube_proxy_args_filtered | unique
               },
               recursive=True
             )
+            if k3s_kube_proxy_args_filtered | length > 0
+            else k3s_config_current
           }}
 
     - name: Write updated K3s configuration
