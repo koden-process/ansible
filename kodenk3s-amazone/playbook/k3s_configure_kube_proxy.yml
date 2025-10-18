@@ -1,0 +1,82 @@
+---
+- name: Configure kube-proxy strict ARP on K3s servers
+  hosts: k8s_master
+  become: true
+  tasks:
+    - name: Ensure K3s configuration directory exists
+      ansible.builtin.file:
+        path: /etc/rancher/k3s
+        state: directory
+        mode: "0755"
+
+    - name: Check for existing K3s config file
+      ansible.builtin.stat:
+        path: /etc/rancher/k3s/config.yaml
+      register: k3s_config_stat
+
+    - name: Read existing K3s config when present
+      ansible.builtin.slurp:
+        path: /etc/rancher/k3s/config.yaml
+      register: k3s_config_raw
+      when: k3s_config_stat.stat.exists
+      ignore_errors: true
+
+    - name: Preserve decoded config content
+      ansible.builtin.set_fact:
+        k3s_config_raw_text: "{{ k3s_config_raw.content | b64decode }}"
+      when: k3s_config_raw is defined and k3s_config_raw.content is defined
+
+    - name: Decode existing config content
+      ansible.builtin.set_fact:
+        k3s_config_current: "{{ k3s_config_raw_text | from_yaml }}"
+      when:
+        - k3s_config_raw_text is defined
+        - k3s_config_raw_text | trim | length > 0
+
+    - name: Initialize empty config when missing
+      ansible.builtin.set_fact:
+        k3s_config_current: {}
+      when: k3s_config_current is not defined
+
+    - name: Prepare kube-proxy argument list
+      ansible.builtin.set_fact:
+        k3s_kube_proxy_args: >-
+          {{
+            k3s_config_current.get('kube-proxy-arg')
+            if (
+              k3s_config_current.get('kube-proxy-arg') is iterable and
+              k3s_config_current.get('kube-proxy-arg') is not string
+            )
+            else (
+              [k3s_config_current.get('kube-proxy-arg')]
+              if k3s_config_current.get('kube-proxy-arg') is defined
+              else []
+            )
+          }}
+
+    - name: Merge kube-proxy arguments
+      ansible.builtin.set_fact:
+        k3s_config_merged: >-
+          {{
+            k3s_config_current | combine(
+              {
+                'kube-proxy-arg': k3s_kube_proxy_args | unique
+              },
+              recursive=True
+            )
+          }}
+
+    - name: Write updated K3s configuration
+      ansible.builtin.copy:
+        dest: /etc/rancher/k3s/config.yaml
+        content: |-
+          {{ k3s_config_merged | to_nice_yaml(indent=2, sort_keys=False) }}
+        mode: "0644"
+      notify: Restart k3s service
+
+  handlers:
+    - name: Restart k3s service
+      ansible.builtin.systemd:
+        name: k3s
+        state: restarted
+        daemon_reload: true
