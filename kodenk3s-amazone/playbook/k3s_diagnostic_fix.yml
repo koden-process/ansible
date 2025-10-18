@@ -4,7 +4,7 @@
   become: yes
   vars:
     # Utilisation de la même version pour tous les nœuds
-    k3s_version: v1.29.4+k3s1  # Version du master, on aligne tout dessus
+    k3s_version: v1.32.6+k3s1  # Version cible pour tous les nœuds
     k3s_install_url: https://get.k3s.io
     
   tasks:
