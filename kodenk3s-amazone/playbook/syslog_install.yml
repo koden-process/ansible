@@ -1,0 +1,78 @@
+---
+- name: Installer et configurer rsyslog sur koden0
+  hosts: koden0
+  become: yes
+  tasks:
+    - name: Installer rsyslog
+      package:
+        name: rsyslog
+        state: present
+
+    - name: Créer le répertoire pour les logs centralisés
+      file:
+        path: /var/log/remote
+        state: directory
+        owner: syslog
+        group: adm
+        mode: '0755'
+
+    - name: Configurer rsyslog pour recevoir des logs distants (UDP)
+      blockinfile:
+        path: /etc/rsyslog.conf
+        block: |
+          # Activer la réception UDP sur le port 514
+          module(load="imudp")
+          input(type="imudp" port="514")
+
+          # Activer la réception TCP sur le port 514
+          module(load="imtcp")
+          input(type="imtcp" port="514")
+
+          # Template pour organiser les logs par host
+          $template RemoteHost,"/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
+          if $fromhost-ip != '127.0.0.1' then ?RemoteHost
+          & stop
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - Remote logging"
+        insertafter: "^#### MODULES ####"
+        backup: yes
+
+    - name: Vérifier la configuration rsyslog
+      command: rsyslogd -N1
+      register: rsyslog_check
+      changed_when: false
+      failed_when: rsyslog_check.rc != 0
+
+    - name: Activer le service rsyslog au démarrage
+      systemd:
+        name: rsyslog
+        enabled: yes
+        state: started
+
+    - name: Redémarrer rsyslog pour appliquer la configuration
+      systemd:
+        name: rsyslog
+        state: restarted
+
+    - name: Ouvrir le port 514 UDP dans le firewall (si UFW est actif)
+      ufw:
+        rule: allow
+        port: '514'
+        proto: udp
+      ignore_errors: yes
+
+    - name: Ouvrir le port 514 TCP dans le firewall (si UFW est actif)
+      ufw:
+        rule: allow
+        port: '514'
+        proto: tcp
+      ignore_errors: yes
+
+    - name: Afficher le statut de rsyslog
+      command: systemctl status rsyslog
+      register: rsyslog_status
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Afficher le résultat
+      debug:
+        var: rsyslog_status.stdout_lines
