@@ -41,8 +41,8 @@
           After=network.target
 
           [Service]
-          Type=simple
-          ExecStart=/usr/bin/nfcapd -w -D -l /var/cache/nfdump/profiles/live -p 9995 -S 1 -P /var/run/nfcapd.pid
+          Type=forking
+          ExecStart=/usr/bin/nfcapd -D -l /var/cache/nfdump/profiles/live -p 4379 -b 0.0.0.0 -S 1 -P /var/run/nfcapd.pid
           PIDFile=/var/run/nfcapd.pid
           Restart=on-failure
           RestartSec=5s
@@ -61,10 +61,10 @@
         enabled: yes
         state: started
 
-    - name: Ouvrir le port 9995 UDP dans le firewall (si UFW est actif)
+    - name: Ouvrir le port 4379 UDP dans le firewall (si UFW est actif)
       ufw:
         rule: allow
-        port: '9995'
+        port: '4379'
         proto: udp
       ignore_errors: yes
 
@@ -74,14 +74,44 @@
       changed_when: false
       ignore_errors: yes
 
-    - name: Afficher le résultat
+    - name: Afficher le résultat du statut
       debug:
         var: nfcapd_status.stdout_lines
+
+    - name: Vérifier les ports en écoute
+      shell: ss -uln | grep 4379
+      register: port_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Afficher les ports en écoute
+      debug:
+        var: port_check.stdout_lines
+
+    - name: Vérifier les processus nfcapd
+      shell: ps aux | grep nfcapd | grep -v grep
+      register: process_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Afficher les processus nfcapd
+      debug:
+        var: process_check.stdout_lines
+
+    - name: Afficher les logs récents de nfcapd
+      command: journalctl -u nfcapd -n 20 --no-pager
+      register: nfcapd_logs
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Afficher les logs
+      debug:
+        var: nfcapd_logs.stdout_lines
 
     - name: Afficher les informations d'utilisation
       debug:
         msg:
-          - "nfdump est maintenant installé et nfcapd est en écoute sur le port 9995/UDP"
+          - "nfdump est maintenant installé et nfcapd est en écoute sur le port 4379/UDP"
           - "Les données NetFlow sont stockées dans /var/cache/nfdump/profiles/live"
           - "Pour lire les flows: nfdump -R /var/cache/nfdump/profiles/live"
           - "Pour voir les top talkers: nfdump -R /var/cache/nfdump/profiles/live -s ip/bytes -n 10"
