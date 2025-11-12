@@ -1,0 +1,88 @@
+---
+- name: Installer et configurer nfdump sur koden0
+  hosts: koden0
+  become: yes
+  tasks:
+    - name: Installer nfdump
+      package:
+        name: nfdump
+        state: present
+
+    - name: Créer le répertoire pour les données NetFlow
+      file:
+        path: /var/cache/nfdump
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Créer le répertoire pour les profils NetFlow
+      file:
+        path: /var/cache/nfdump/profiles
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Créer un profil par défaut
+      file:
+        path: /var/cache/nfdump/profiles/live
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Créer le fichier de service systemd pour nfcapd
+      copy:
+        dest: /etc/systemd/system/nfcapd.service
+        content: |
+          [Unit]
+          Description=NetFlow Capture Daemon
+          After=network.target
+
+          [Service]
+          Type=simple
+          ExecStart=/usr/bin/nfcapd -w -D -l /var/cache/nfdump/profiles/live -p 9995 -S 1 -P /var/run/nfcapd.pid
+          PIDFile=/var/run/nfcapd.pid
+          Restart=on-failure
+          RestartSec=5s
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+
+    - name: Recharger les fichiers de service systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Activer le service nfcapd au démarrage
+      systemd:
+        name: nfcapd
+        enabled: yes
+        state: started
+
+    - name: Ouvrir le port 9995 UDP dans le firewall (si UFW est actif)
+      ufw:
+        rule: allow
+        port: '9995'
+        proto: udp
+      ignore_errors: yes
+
+    - name: Vérifier que nfcapd est en cours d'exécution
+      command: systemctl status nfcapd
+      register: nfcapd_status
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Afficher le résultat
+      debug:
+        var: nfcapd_status.stdout_lines
+
+    - name: Afficher les informations d'utilisation
+      debug:
+        msg:
+          - "nfdump est maintenant installé et nfcapd est en écoute sur le port 9995/UDP"
+          - "Les données NetFlow sont stockées dans /var/cache/nfdump/profiles/live"
+          - "Pour lire les flows: nfdump -R /var/cache/nfdump/profiles/live"
+          - "Pour voir les top talkers: nfdump -R /var/cache/nfdump/profiles/live -s ip/bytes -n 10"
+          - "Pour filtrer par IP: nfdump -R /var/cache/nfdump/profiles/live 'host 10.0.0.200'"
